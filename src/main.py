@@ -11,7 +11,6 @@ def main():
     engine = QQmlApplicationEngine()
 
     signal.signal(signal.SIGINT, signal.SIG_DFL)
-    engine.load("src/ui/main.qml")
 
     if not os.environ.get("QT_QUICK_CONTROLS_STYLE"):
        os.environ["QT_QUICK_CONTROLS_STYLE"] = "org.kde.desktop"

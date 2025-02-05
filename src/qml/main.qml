@@ -87,6 +87,7 @@ Kirigami.ApplicationWindow {
                                 }
 
                                 Controls.Label {
+                                    text: modelData
                                     Layout.fillWidth: true
                                     wrapMode: Text.WordWrap
                                 }
