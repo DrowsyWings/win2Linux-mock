@@ -9,3 +9,5 @@ Win2Linux is an interactive assistant that guides Windows users through their tr
 - Linux distributions that best match their needs
 - Alternative software for their Windows applications
 - Installation guidance and best practices
+
+## To start the application
