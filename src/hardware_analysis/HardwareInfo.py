@@ -1,98 +1,127 @@
-import subprocess
+import psutil
+import wmi
 import json
+import logging
 import platform
-from typing import Dict, Optional
+from typing import Dict, List, Optional, Any, Union
+
+# Logging setup
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 class HardwareInfo:
-    def __init__(self, vbs_path: str):
-        if not self.is_windows():
-            raise SystemError("This script is meant for Windows. If you're seeing this, you're all good!")
+    def __init__(self):
+        if not self._is_windows():
+            raise SystemError("This script is designed for Windows only.")
 
-        self.vbs_path: str = vbs_path
-        self.hardware_details: Dict[str, str] = {}
+        self._wmi_client = wmi.WMI()
+        self._hardware_details: Dict[str, Any] = {}
 
-    def is_windows(self) -> bool:
+    def _is_windows(self) -> bool:
+        """Checks if the current OS is Windows."""
         return platform.system().lower() == "windows"
 
-    # TODO: research if this is sufficient for Win8 or older
-    def run_vbscript(self) -> Optional[str]:
-        try:
-            process_output = subprocess.run(
-                ["cscript", "//NoLogo", self.vbs_path],
-                capture_output=True,
-                text=True,
-                check=True
-            )
+    def _get_system_info(self) -> None:
+        """Collects system details."""
+        for item in self._wmi_client.Win32_ComputerSystem():
+            self._hardware_details["Manufacturer"] = item.Manufacturer
+            self._hardware_details["System Architecture"] = item.SystemType.lower()
+            self._hardware_details["Total RAM"] = self._convert_bytes_to_mb(psutil.virtual_memory().total)
 
-            # Ensure output is not empty
-            if not process_output.stdout.strip():
-                print("ERROR: VBScript executed successfully but returned no data.")
-                return None
+    def _get_cpu_info(self) -> None:
+        """Collects CPU details."""
+        cpu_info = psutil.cpu_freq()
+        for cpu in self._wmi_client.Win32_Processor():
+            self._hardware_details["CPU Name"] = cpu.Name
+            self._hardware_details["Number of Cores"] = psutil.cpu_count(logical=False)
+            self._hardware_details["Number of Logical Processors"] = psutil.cpu_count(logical=True)
+            self._hardware_details["Clock Speed"] = f"{cpu_info.max:.2f} MHz" if cpu_info and cpu_info.max else f"{cpu.MaxClockSpeed} MHz"
+            self._hardware_details["CPU Architecture"] = platform.architecture()[0]
 
-            return process_output.stdout
-        except FileNotFoundError:
-            print(f"ERROR: VBScript file '{self.vbs_path}' not found.")
-            return None
-        except subprocess.CalledProcessError as e:
-            print(f"ERROR: VBScript execution failed.\n{e}")
-            return None
+    def _get_gpu_info(self) -> None:
+        """Collects GPU details."""
+        gpus = self._wmi_client.Win32_VideoController()
+        if not gpus:
+            self._hardware_details["GPU"] = "Not Available"
+            return
 
-    def parse_output(self, raw_output: str) -> None:
-        details: Dict[str, str] = {}
+        if len(gpus) == 1:
+            self._hardware_details["GPU"] = {
+                "GPU Name": gpus[0].Name,
+                "GPU Memory": self._convert_bytes_to_mb(gpus[0].AdapterRAM)
+            }
+        else:
+            self._hardware_details["GPUs"] = [
+                {"GPU Name": gpu.Name, "GPU Memory": self._convert_bytes_to_mb(gpu.AdapterRAM)}
+                for gpu in gpus
+            ]
 
-        for line in raw_output.splitlines():
-            if ": " in line:
-                key, value = line.split(": ", 1)
-                details[key.strip()] = value.strip()
+    @staticmethod
+    def _convert_bytes_to_mb(size_in_bytes: Optional[int]) -> float:
+        """Converts bytes to MB (2^20 bytes = 1 megabyte)."""
+        return 0.0 if not size_in_bytes else round(size_in_bytes / (1024 * 1024), 2)
 
-        self.hardware_details = details
+    def collect_hardware_info(self) -> None:
+        """Runs all data collection methods."""
+        self._get_system_info()
+        self._get_cpu_info()
+        self._get_gpu_info()
 
     def display_info(self) -> None:
-        if not self.hardware_details:
-            print("ERROR: No hardware information to display.")
+        """Displays hardware details."""
+        if not self._hardware_details:
+            logging.error("No hardware information available to display.")
             return
 
         print("\n*** HARDWARE INFORMATION ***\n")
-        for category, detail in self.hardware_details.items():
-            print(f"{category}: {detail}")
+        for key, value in self._hardware_details.items():
+            if key in ["GPU", "GPUs"]:
+                print("\nGPU(s):")
+                if isinstance(value, dict):
+                    print(f"  GPU: {value['GPU Name']}")
+                    print(f"  Memory: {value['GPU Memory']} MB")
+                elif isinstance(value, list):
+                    for idx, gpu in enumerate(value, start=1):
+                        print(f"  GPU {idx}: {gpu['GPU Name']}")
+                        print(f"  Memory: {gpu['GPU Memory']} MB")
+            elif key in ["Number of Cores", "Number of Logical Processors"]:
+                print(f"{key}: {value}")
+            elif key in ["Total RAM", "GPU Memory", "Clock Speed"]:
+                print(f"{key}: {value} MB")
+            else:
+                print(f"{key}: {value}")
         print("\n****************************\n")
 
-    def to_json(self, save_to_file: bool = False, filename: str = "hardware_info.json") -> Optional[str]:
-        if not self.hardware_details:
-            print("ERROR: No hardware data available, JSON conversion failed.")
+    def to_json(self, save_to_file: bool = False, filename: str = "hardware_info.json") -> str:
+        """
+        Converts hardware details to JSON format.
+
+        Args:
+            save_to_file (bool): If True, saves the JSON output to a file in the working directory.
+            filename (str): Name of the output file, used iff save_to_file is True.
+        Returns:
+            str: Hardware details in a JSON string.
+        """
+        if not self._hardware_details:
+            logging.error("No hardware data available, JSON conversion failed.")
             return None
 
-        json_data: str = json.dumps(self.hardware_details, indent=4)
+        json_data: str = json.dumps(self._hardware_details, indent=4, sort_keys=True)
 
         if save_to_file:
             try:
-                with open(filename, "w") as file:
+                with open(filename, 'w') as file:
                     file.write(json_data)
-                print(f"Hardware info saved as '{filename}'!")
+                logging.info(f"Hardware info saved as '{filename}'!")
             except IOError as e:
-                print(f"ERROR: Unable to write to file '{filename}'.\n{e}")
-                return None
+                logging.error(f"Couldn't write to file '{filename}'. Exception: {e}")
 
         return json_data
 
-    def fetch_and_display(self) -> None:
-        raw_output: Optional[str] = self.run_vbscript()
-        if raw_output:
-            self.parse_output(raw_output)
-            self.display_info()
-
 if __name__ == "__main__":
-    vbs_path: str = "hw_collection.vbs"
-
     try:
-        hardware_info = HardwareInfo(vbs_path)
-        hardware_info.fetch_and_display()
-
-        # Uncomment to allow for JSON formatted output
-        # json_output = hardware_info.to_json(save_to_file=True)
-        # if json_output:
-        #     print("\nJSON Data:\n", json_output)
-
+        hardware_info = HardwareInfo()
+        hardware_info.collect_hardware_info()
+        hardware_info.display_info()
+        hardware_info.to_json(True)
     except Exception as e:
-        print(f"ERROR: {e}")
-
+        logging.error(f"Unexpected error: {e}")
