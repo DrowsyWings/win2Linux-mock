@@ -5,92 +5,145 @@ import org.kde.kirigami as Kirigami
 
 Kirigami.Page {
     id: welcomePage
-    title: qsTr("Welcome to Win2Linux")
-
+    title: qsTr("Win2Linux")
+    font.weight: 700
+    padding: 0
+    
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Kirigami.Units.largeSpacing
+        anchors.margins: Kirigami.Units.gridUnit * 2
+        spacing: Kirigami.Units.gridUnit * 2
 
-        Kirigami.Heading {
-            text: qsTr("Start Your Linux Journey")
-            level: 2
-            Layout.fillWidth: true
-        }
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+            spacing: Kirigami.Units.largeSpacing
 
-        Controls.Label {
-            text: qsTr("Let's personalize your Linux experience!")
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
-            Layout.topMargin: Kirigami.Units.largeSpacing
-        }
-
-        Kirigami.Card {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Kirigami.Units.gridUnit * 12
-            Layout.topMargin: Kirigami.Units.largeSpacing
-
-            header: Kirigami.Heading {
-                text: qsTr("Before We Begin")
-                level: 3
+            Image {
+                source: "../../../assets/logo-150x150.png"  
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 5
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 5
             }
 
-            contentItem: ColumnLayout {
-                Controls.Label {
-                    text: qsTr("We'll help you with:")
-                    font.bold: true
+            ColumnLayout {  
+                spacing: Kirigami.Units.smallSpacing
+                Layout.alignment: Qt.AlignVCenter
+
+                Kirigami.Heading {
+                    text: "Win2Linux"
+                    level: 1
+                    font.family: "Noto Sans"
+                    font.weight: Font.Bold
+                    font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 2
                 }
 
-                Repeater {
-                    model: [
-                        "Finding the right Linux distribution",
-                        "Identifying Linux alternatives to Windows software",
-                        "Getting started with installation"
-                    ]
+                Controls.Label {
+                    text: qsTr("Windows to Linux Transition Helper")
+                    font.family: "Noto Sans"
+                    opacity: 0.6  
+                    font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.1
+                }
+            }
+        }
+    ColumnLayout{
+        Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: Kirigami.Units.gridUnit
+        spacing: Kirigami.Units.gridUnit
+        Controls.Label {
+            text: qsTr("Let's personalize your Linux experience!")
+            font.family: "Noto Sans"
+            font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1
+            Layout.alignment: Qt.AlignLeading
+            Layout.topMargin: Kirigami.Units.gridUnit * 0.5
+            Layout.bottomMargin: Kirigami.Units.gridUnit * 0.5
+        }
 
-                    delegate: RowLayout {
-                        Kirigami.Icon {
-                            source: "checkmark"
-                            Layout.preferredWidth: Kirigami.Units.iconSizes.small
-                            Layout.preferredHeight: Kirigami.Units.iconSizes.small
-                        }
-                        Controls.Label {
-                            text: modelData
-                            wrapMode: Text.WordWrap
-                        }
+        ColumnLayout {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: Kirigami.Units.gridUnit
+            spacing: Kirigami.Units.gridUnit
+
+            Controls.Label {
+                text: qsTr("We will help you with:")
+                font.family: "Noto Sans"
+                Layout.alignment: Qt.AlignLeading
+            }
+
+            Repeater {
+                model: [
+                    "Finding the right Linux distribution",
+                    "Identifying alternatives to Windows software",
+                    "Getting started with installation"
+                ]
+
+                delegate: RowLayout {
+                    Layout.alignment: Qt.AlignLeading
+                    spacing: Kirigami.Units.smallSpacing
+
+                    Kirigami.Icon {
+                        source: "checkmark"
+                        Layout.preferredWidth: Kirigami.Units.iconSizes.small
+                        Layout.preferredHeight: Kirigami.Units.iconSizes.small
+                        color: Kirigami.Theme.positiveTextColor
+                    }
+
+                    Controls.Label {
+                        text: modelData
+                        font.family: "Noto Sans"
                     }
                 }
             }
         }
+    }
+        ColumnLayout{
+            Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: Kirigami.Units.gridUnit
+            spacing: Kirigami.Units.gridUnit
+            
+            Controls.Button {
+                text: qsTr("Take the test!")
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 15
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 3
+                Layout.topMargin: Kirigami.Units.gridUnit
+            
+                background: Rectangle {
+                color: parent.hovered ? "#8CE743" : "#96F948"
+                radius: height / 4
+            }
 
-        Item {
-            Layout.fillHeight: true
+            contentItem: Controls.Label {
+                text: parent.text
+                font.family: "Noto Sans"
+                font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                color: "#000000"
+            }
+            onClicked: {
+
+            }
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.margins: Kirigami.Units.largeSpacing
-
             Controls.Button {
-                text: qsTr("Exit")
-                icon.name: "dialog-cancel"
-                onClicked: Qt.quit()
+                Layout.alignment: Qt.AlignHCenter
+                flat: true
+                Layout.topMargin: Kirigami.Units.gridUnit * -0.5
+            
+            
+            contentItem: Controls.Label {
+                text: qsTr("New here? Find out more about us!")
+                font.family: "Source Sans Pro"
+                color: Kirigami.Theme.linkColor
+                horizontalAlignment: Text.AlignHCenter
+                font.underline: true
             }
+            onClicked: {
 
-            Item {
-                Layout.fillWidth: true
             }
-
-            Controls.Button {
-                text: qsTr("Previous")
-                icon.name: "arrow-left"
-                enabled: false  
-            }
-
-            Controls.Button {
-                text: qsTr("Start")
-                icon.name: "arrow-right"
-                onClicked: pageStack.push(Qt.createComponent("pages/questionnaires.qml"))
-            }
+       }
+    }
+        Item {
+            Layout.fillHeight: true
         }
     }
 }
