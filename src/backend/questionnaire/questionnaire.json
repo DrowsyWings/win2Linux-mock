@@ -58,6 +58,37 @@
         "2": "I can find and install drivers myself",
         "3": "I need full driver support out of the box"
       }
+    },
+    {
+      "id": 8,
+      "question": "Security Requirements",
+      "description": "What level of security features do you need?",
+      "options": {
+        "1": "Basic security features are sufficient",
+        "2": "Enhanced security with regular updates",
+        "3": "Maximum security with specialized tools and configurations"
+      }
+    },
+    {
+      "id": 9,
+      "question": "Desktop Environment Preference",
+      "description": "Which type of desktop environment would you prefer?",
+      "options": {
+        "1": "Traditional (Windows-like)",
+        "2": "Modern and Sleek",
+        "3": "Minimal and Fast",
+        "4": "Highly Customizable"
+      }
+    },
+    {
+      "id": 10,
+      "question": "Software Compatibility",
+      "description": "How important is Windows software compatibility to you?",
+      "options": {
+        "1": "Not important - I'll use Linux alternatives",
+        "2": "Somewhat important - I need to run some Windows programs",
+        "3": "Very important - I need to run many Windows programs"
+      }
     }
   ]
 }
