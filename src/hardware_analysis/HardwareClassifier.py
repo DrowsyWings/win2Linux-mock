@@ -115,24 +115,38 @@ class HardwareClassifier:
             int: Subscore for the GPU (0 to 3).
         """
 
-        high_performance_gpus = (
-            "RTX", "Radeon RX 5", "Radeon RX 6", "Radeon RX 7", "Iris Xe", "Radeon 780M", "Radeon 680M",
-            "GTX 1080", "GTX 980 Ti", "GTX 970", "Radeon R9 Fury", "Radeon R9 390X", "Quadro P5000", "FirePro W9000"
-        )
-        mid_tier_gpus = (
-            "GTX 1060", "GTX 1050 Ti", "GTX 1650", "GTX 1660", "GTX 970", "GTX 960", "GTX 950",
-            "Radeon R9 380", "Radeon R9 370", "RX 470", "RX 570", "Quadro P2000", "Radeon Pro WX"
-        )
-        low_end_gpus = (
-            "GTX 750", "GTX 660", "GT 1030", "Radeon R7", "Radeon R5", "RX 460", "HD 7770",
-            "Intel UHD", "Vega 3", "Vega 5"
-        )
+        import re
 
-        if any(key in gpu_name for key in high_performance_gpus):
+        # Static declaration
+        if not hasattr(classify_gpu, "high_performance_patterns"):
+            classify_gpu.high_performance_patterns = [
+                r"RTX\s?\d{3,}",        # RTX series
+                r"RX\s?(6|7|8)\d{2,}",  # RX 7xxx and 6xxx, also 8xxx as it's due soon (?)
+                r"Arc\s?(A7|B5)\d{2,}"  # Arc A700/B500
+            ]
+
+            classify_gpu.mid_tier_patterns = [
+                r"GTX\s?(9|1[0-6])\d{2,}",  # GTX 9xx - 16xx
+                r"RX\s?(4|5)\d{2,}",        # RX 4xxx and 5xxx
+                r"R(9|7)\s?\d{3,}",         # Radeon R9 and R7 series
+                r"Arc\s?A5\d{2,}"           # Arc A500
+            ]
+
+            classify_gpu.low_end_patterns = [
+                r"GTX\s?[1-8]\d{2,}",   # GTX 1xx-8xx
+                r"R5\s?\d{3,}",         # R5 series
+                r"HD\s?\d{3,4}",        # Radeon HD series
+                r"Intel\s?(UHD|HD)",    # Intel UHD/HD Graphics
+                r"Vega\s?\d{1,2}"       # AMD Vega integrated GPUs
+            ]
+
+        gpu_name = gpu_name.strip()
+
+        if any(re.search(p, gpu_name, re.IGNORECASE) for p in classify_gpu.high_performance_patterns):
             return 3
-        elif any(key in gpu_name for key in mid_tier_gpus):
+        if any(re.search(p, gpu_name, re.IGNORECASE) for p in classify_gpu.mid_tier_patterns):
             return 2
-        elif any(key in gpu_name for key in low_end_gpus):
+        if any(re.search(p, gpu_name, re.IGNORECASE) for p in classify_gpu.low_end_patterns):
             return 1
 
         # Fallback: Classification based on VRAM
