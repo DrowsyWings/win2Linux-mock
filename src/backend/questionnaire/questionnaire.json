@@ -1,0 +1,63 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "Identify Primary Use Case",
+      "description": "What will be your primary use case for this system?",
+      "options": {
+        "1": "Daily Work (browsing, emails, music and movies)",
+        "2": "Development & Programming",
+        "3": "Gaming & Graphics",
+        "4": "Running on Older Hardware"
+      }
+    },
+    {
+      "id": 2,
+      "question": "Hardware Capabilities",
+      "description": "What best describes your hardware?",
+      "options": {
+        "1": "Recent hardware (less than 5 years old)",
+        "2": "Older hardware (10+ years)",
+        "3": "32-bit system"
+      }
+    },
+    {
+      "id": 3,
+      "question": "Long-Term Support (LTS) vs Rolling Release",
+      "description": "Would you prefer a system with:",
+      "options": {
+        "1": "Long-term stability and fewer updates (LTS)",
+        "2": "Newer Features with frequent updates"
+      }
+    },
+    {
+      "id": 4,
+      "question": "User Interface Preference",
+      "description": "What type of user interface do you prefer?",
+      "options": {
+        "1": "Windows-like UI",
+        "2": "Mac-like UI"
+      }
+    },
+    {
+      "id": 5,
+      "question": "User Experience and Support",
+      "description": "How important are user-friendliness, community support, and documentation quality to you?",
+      "options": {
+        "1": "Not important - I can manage technical issues myself",
+        "2": "Somewhat important - I prefer a simple system with some support",
+        "3": "Very important - I'm new to Linux and need a user-friendly system with strong support"
+      }
+    },
+    {
+      "id": 6,
+      "question": "Driver Support",
+      "description": "How should we handle driver support for your hardware?",
+      "options": {
+        "1": "Auto-detect hardware and provide necessary support",
+        "2": "I can find and install drivers myself",
+        "3": "I need full driver support out of the box"
+      }
+    }
+  ]
+}
