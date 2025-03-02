@@ -1,0 +1,112 @@
+{
+  "metadata": {
+    "scoring_scales": {
+      "customizability": "1-5",
+      "good_docs": "1-5",
+      "ease_installation": "1-5 (higher -> easier)",
+      "old_hardware": "1-5 (higher -> better support)",
+      "community_support": "1-5",
+      "updates": ["Rolling", "Point"],
+      "ease_of_use": "1-5 (higher -> easier)"
+    }
+  },
+
+  "distributions": {
+    "Fedora": {
+      "scores": {
+        "customizability": 4,
+        "good_docs": 5,
+        "ease_installation": 3,
+        "old_hardware": 2,
+        "community_support": 5,
+        "updates": "Point",
+        "ease_of_use": 3
+      },
+      "metadata": {
+        "website": "https://fedoraproject.org/",
+        "description": "Fedora Linux is a free and open-source operating system based on the Linux kernel and was developed by the community-supported Fedora Project. It is known for its fast release cycle, which keeps the operating system up to date with the latest software and technologies.",
+        "screenshot": "https://example.com/"
+      }
+    },
+    "Linux_Mint_XFCE": {
+      "scores": {
+        "customizability": 3,
+        "good_docs": 3,
+        "ease_installation": 5,
+        "old_hardware": 4,
+        "community_support": 4,
+        "updates": "Point",
+        "ease_of_use": 4
+      },
+      "metadata": {
+        "website": "https://www.linuxmint.com/",
+        "description": "Linux Mint XFCE is a user-friendly operating system based on Ubuntu, designed for ease of use.",
+        "screenshot": "https://example.com/"
+      }
+    },
+    "Linux_Mint_Cinnamon": {
+      "scores": {
+        "customizability": 3,
+        "good_docs": 5,
+        "ease_installation": 5,
+        "old_hardware": 3,
+        "community_support": 4,
+        "updates": "Point",
+        "ease_of_use": 5
+      },
+      "metadata": {
+        "website": "https://linuxmint.com/",
+        "description": "The most popular version of Linux Mint is the Cinnamon edition. Cinnamon is primarily developed for and by Linux Mint. It is slick, beautiful, and full of new features.",
+        "screenshot": "https://example.com/"
+      }
+    },
+    "Kubuntu": {
+      "scores": {
+        "customizability": 5,
+        "good_docs": 3,
+        "ease_installation": 4,
+        "old_hardware": 3,
+        "community_support": 4,
+        "updates": "Point",
+        "ease_of_use": 2
+      },
+      "metadata": {
+        "website": "https://kubuntu.org/",
+        "description": "Kubuntu is an official flavor of Ubuntu featuring the KDE Plasma desktop environment.",
+        "screenshot": "https://example.com/"
+      }
+    },
+    "Lubuntu": {
+      "scores": {
+        "customizability": 2,
+        "good_docs": 2,
+        "ease_installation": 4,
+        "old_hardware": 5,
+        "community_support": 3,
+        "updates": "Point",
+        "ease_of_use": 4
+      },
+      "metadata": {
+        "website": "https://lubuntu.me/",
+        "description": "Lubuntu is a lightweight version of Ubuntu, using the LXQt desktop environment.",
+        "screenshot": "https://example.com/"
+      }
+    },
+    "Pop_OS": {
+      "scores": {
+        "customizability": 3,
+        "good_docs": 4,
+        "ease_installation": 5,
+        "old_hardware": 2,
+        "community_support": 4,
+        "updates": "Point",
+        "ease_of_use": 4
+      },
+      "metadata": {
+        "website": "https://pop.system76.com/",
+        "description": "Pop!_OS is an operating system for STEM and creative professionals who use their computer as a tool to discover and create.",
+        "screenshot": "https://example.com/"
+      }
+    }
+  }
+}
