@@ -4,6 +4,7 @@ import os
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import QUrl
+from backend.questionnaire.questionnaire import QuestionnaireModel
 
 def main():
 
@@ -18,6 +19,9 @@ def main():
     base_path = os.path.abspath(os.path.dirname(__file__))
     url = QUrl(f"file://{base_path}/qml/main.qml")
     engine.load(url)
+
+    questionnaire_model = QuestionnaireModel()
+    engine.rootContext().setContextProperty("questionnaireModel", questionnaire_model)
 
     if len(engine.rootObjects()) == 0:
         quit()
