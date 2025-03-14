@@ -55,8 +55,7 @@
       "description": "How should we handle driver support for your hardware?",
       "options": {
         "1": "Auto-detect hardware and provide necessary support",
-        "2": "I can find and install drivers myself",
-        "3": "I need full driver support out of the box"
+        "2": "I can find and install drivers myself"
       }
     }
   ]
