@@ -5,7 +5,14 @@
       "updates": { "Rolling": 0, "Point": 1 },
       "UI_Look": { "Windows-like UI": 0, "Mac-like UI": 1 },
       "ease_of_use": "1-5 (higher -> easier)",
-      "driver_support": "1-5 (higher -> better support for drivers)"
+      "driver_support": "1-5 (higher -> better support for drivers)",
+      "hardware_scores": {
+        "Number of Cores": "1-5 (higher -> more cores needed)",
+        "RAM needed": "1-5 (higher -> more RAM required)",
+        "Recommended Storage Type": "1 for SSD, 0 for HDD",
+        "Recommended Storage Required": "1-5 (higher -> more storage needed)",
+        "GPU_Score": "1-5 (higher -> better GPU required)"
+      }
     }
   },
   "distributions": {
@@ -21,6 +28,13 @@
         "website": "https://fedoraproject.org/",
         "description": "Fedora Linux is a free and open-source operating system known for its fast release cycle and up-to-date software.",
         "screenshot": "https://example.com/"
+      },
+      "hardware_scores": {
+        "Number of Cores": 3,
+        "RAM needed": 3,
+        "Recommended Storage Type": 1,
+        "Recommended Storage Required": 3,
+        "GPU_Score": 3
       }
     },
     "Linux_Mint_XFCE": {
@@ -35,6 +49,13 @@
         "website": "https://www.linuxmint.com/",
         "description": "Linux Mint XFCE is a lightweight and user-friendly operating system based on Ubuntu, designed for older hardware.",
         "screenshot": "https://example.com/"
+      },
+      "hardware_scores": {
+        "Number of Cores": 2,
+        "RAM needed": 2,
+        "Recommended Storage Type": 0,
+        "Recommended Storage Required": 2,
+        "GPU_Score": 1
       }
     },
     "Linux_Mint_Cinnamon": {
@@ -49,6 +70,13 @@
         "website": "https://linuxmint.com/",
         "description": "Linux Mint Cinnamon offers a sleek, Windows-like experience with great ease of use and strong driver support.",
         "screenshot": "https://example.com/"
+      },
+      "hardware_scores": {
+        "Number of Cores": 3,
+        "RAM needed": 3,
+        "Recommended Storage Type": 1,
+        "Recommended Storage Required": 3,
+        "GPU_Score": 3
       }
     },
     "Kubuntu": {
@@ -63,6 +91,13 @@
         "website": "https://kubuntu.org/",
         "description": "Kubuntu is an official Ubuntu flavor featuring the KDE Plasma desktop environment.",
         "screenshot": "https://example.com/"
+      },
+      "hardware_scores": {
+        "Number of Cores": 3,
+        "RAM needed": 3,
+        "Recommended Storage Type": 1,
+        "Recommended Storage Required": 3,
+        "GPU_Score": 3
       }
     },
     "Lubuntu": {
@@ -77,6 +112,13 @@
         "website": "https://lubuntu.me/",
         "description": "Lubuntu is a lightweight Ubuntu variant using the LXQt desktop, optimized for low-resource hardware.",
         "screenshot": "https://example.com/"
+      },
+      "hardware_scores": {
+        "Number of Cores": 2,
+        "RAM needed": 2,
+        "Recommended Storage Type": 0,
+        "Recommended Storage Required": 2,
+        "GPU_Score": 1
       }
     },
     "Pop_OS": {
@@ -91,6 +133,13 @@
         "website": "https://pop.system76.com/",
         "description": "Pop!_OS is an operating system built for STEM and creative professionals, focusing on ease of use.",
         "screenshot": "https://example.com/"
+      },
+      "hardware_scores": {
+        "Number of Cores": 4,
+        "RAM needed": 4,
+        "Recommended Storage Type": 1,
+        "Recommended Storage Required": 4,
+        "GPU_Score": 4
       }
     }
   }
