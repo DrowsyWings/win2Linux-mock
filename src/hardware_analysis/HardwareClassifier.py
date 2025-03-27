@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+import os
 from typing import Dict, Any, List
 from PySide6.QtCore import QObject, Signal, Slot
 
@@ -9,15 +10,26 @@ class HardwareClassifier(QObject):
 
     def __init__(self):
         super().__init__()
-        try:
-            with open("hardware_info.json", "r") as file:
-                self.hardware_data: Dict[str, Any] = json.load(file)
-        except (json.JSONDecodeError, FileNotFoundError) as e:
-            logging.error(f"Error loading hardware info: {e}")
-            self.hardware_data = {}
+        self.hardware_data: Dict[str, Any] = {}  # Initialize empty, load when needed
+
+    def _load_hardware_data(self):
+        """Loads hardware data from hardware_info.json if it exists."""
+        if os.path.exists("hardware_info.json"):
+            try:
+                with open("hardware_info.json", "r") as file:
+                    self.hardware_data = json.load(file)
+                    logging.info("Hardware data successfully loaded.")
+            except (json.JSONDecodeError, FileNotFoundError) as e:
+                logging.error(f"Error loading hardware info: {e}")
+                self.hardware_data = {}
+        else:
+            logging.warning("hardware_info.json not found. Waiting for data.")
 
     @Slot()
     def classify_hardware(self):
+        """Loads hardware data and classifies it."""
+        self._load_hardware_data()  # Ensure data is loaded before classification
+
         try:
             num_cores: int = self.hardware_data.get("Number of Cores", 0)
             ram: int = self.hardware_data.get("Total RAM", 0)

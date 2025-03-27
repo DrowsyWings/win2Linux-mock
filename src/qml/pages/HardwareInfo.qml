@@ -164,7 +164,7 @@ Kirigami.Page {
                     var url = Qt.resolvedUrl("resultPage.qml")
                     if (url) {
                         pageStack.pop()
-                        pageStack.push(url)
+                        pageStack.push(url,{ skipMode: true })
                     } else {
                         console.error("Failed to resolve URL")
                     }

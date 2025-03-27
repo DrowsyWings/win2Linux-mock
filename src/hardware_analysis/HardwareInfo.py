@@ -1,5 +1,5 @@
 import psutil
-import wmi
+import _wmi
 import json
 import logging
 import platform
@@ -11,12 +11,12 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 
 class HardwareInfo(QObject):
     dataUpdated = Signal(str)
-    super().__init__()
     def __init__(self):
+        super().__init__()
         if not self._is_windows():
             raise SystemError("This script is designed for Windows only.")
 
-        self._wmi_client = wmi.WMI()
+        self._wmi_client = _wmi.WMI()
         self._hardware_details: Dict[str, Any] = {}
 
     def _is_windows(self) -> bool:
@@ -86,7 +86,7 @@ class HardwareInfo(QObject):
         """Converts bytes to MB (2^20 bytes = 1 megabyte)."""
         return 0.0 if not size_in_bytes else round(size_in_bytes / (1024 * 1024), 2)
 
-    @Slot
+    @Slot(result=None)
     def collect_hardware_info(self) -> None:
         """Runs all data collection methods."""
         self._get_system_info()
@@ -121,7 +121,7 @@ class HardwareInfo(QObject):
                 print(f"{key}: {value}")
         print("\n****************************\n")
 
-    @Slot
+    @Slot(result=str)
     def to_json(self, save_to_file: bool = False, filename: str = "hardware_info.json") -> str:
         """
         Converts hardware details to JSON format.

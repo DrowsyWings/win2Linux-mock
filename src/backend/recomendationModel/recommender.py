@@ -76,7 +76,6 @@ class Recommender(QObject):
                     }
                     for distro_name, distro_info in data["distributions"].items()
                 }
-    
                 return distro_vectors
 
         return {}

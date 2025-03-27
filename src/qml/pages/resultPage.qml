@@ -35,7 +35,9 @@ Kirigami.Page {
     }
 
     Component.onCompleted: {
-        hardwareInfo.runHardwareScript();
+        if (skipMode){
+            recommenderModel.calculate_rankings();
+        }
     }
 
     ColumnLayout {
