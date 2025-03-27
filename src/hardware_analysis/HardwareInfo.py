@@ -1,5 +1,5 @@
 import psutil
-import _wmi
+import wmi
 import json
 import logging
 import platform
@@ -16,7 +16,7 @@ class HardwareInfo(QObject):
         if not self._is_windows():
             raise SystemError("This script is designed for Windows only.")
 
-        self._wmi_client = _wmi.WMI()
+        self._wmi_client = wmi.WMI()
         self._hardware_details: Dict[str, Any] = {}
 
     def _is_windows(self) -> bool:
@@ -122,7 +122,7 @@ class HardwareInfo(QObject):
         print("\n****************************\n")
 
     @Slot(result=str)
-    def to_json(self, save_to_file: bool = False, filename: str = "hardware_info.json") -> str:
+    def to_json(self, save_to_file: bool = True, filename: str = "hardware_info.json") -> str:
         """
         Converts hardware details to JSON format.
 

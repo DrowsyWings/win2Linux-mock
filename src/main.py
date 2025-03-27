@@ -18,7 +18,7 @@ def main():
     if not os.environ.get("QT_QUICK_CONTROLS_STYLE"):
         os.environ["QT_QUICK_CONTROLS_STYLE"] = "org.kde.desktop"
 
-    base_path = os.path.dirname(os.path.abspath(file))
+    base_path = os.path.dirname(os.path.abspath(__file__))
     url = QUrl.fromLocalFile(os.path.join(base_path, "qml", "main.qml"))
     engine.load(url)
 
@@ -39,5 +39,5 @@ def main():
 
     app.exec()
 
-if __name__ == "main":
+if __name__ == "__main__":
     main()

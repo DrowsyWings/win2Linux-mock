@@ -79,21 +79,24 @@ class HardwareClassifier(QObject):
         type_score, size_score = 0, 0
         for storage in storage_devices:
             size_gb = storage.get("Size (GB)", 0)
-            storage_type = storage.get("Type", "SSD").upper()
+            storage_type = storage.get("Type", "").upper()
+            interface = storage.get("Interface", "").upper()
 
-            if "SSD" in storage_type:
+            if "SSD" in storage_type or "NVME" in interface:
                 type_score = max(type_score, 1)
             else:
-                type_score = max(type_score, 0)
+                type_score = max(type_score, 0) 
 
+            # Size classification
             if size_gb >= 1000:
                 size_score = max(size_score, 3)
             elif size_gb >= 500:
                 size_score = max(size_score, 2)
-            else:
+            elif size_gb > 0:
                 size_score = max(size_score, 1)
 
         return [type_score, size_score]
+
     
     def _classify_gpu(self, gpu_name: str) -> int:
         high_perf_patterns = [r"RTX\s?\d{3,}", r"RX\s?(6|7|8)\d{2,}", r"GTX\s?(9|1[0-6])\d{2,}"]
