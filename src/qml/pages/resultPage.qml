@@ -13,45 +13,112 @@ Kirigami.Page {
         id: rankingsModel
     }
 
-    Component.onCompleted: {
-        // Hardcoded data for UI testing
-        rankingsModel.clear();
-        rankingsModel.append({ 
-            rank: 1, 
-            distro: "Kubuntu", 
+    // Define distro metadata for UI display
+    property var distroInfo: {
+        "kubuntu": {
             logo: "../../../assets/kubuntu.png",
             features: ["Windows-like flow", "Seamless setup"],
             learnMore: "https://kubuntu.org/getkubuntu/"
-        });
-        rankingsModel.append({ 
-            rank: 2, 
-            distro: "Arch Linux", 
-            logo: "../../../assets/arch.png",
-            features: ["Matches tinkering needs", "Bragging rights"],
-            learnMore: "https://archlinux.org/download/"
-        });
-        rankingsModel.append({ 
-            rank: 3, 
-            distro: "Linux Mint", 
+        },
+        "linux_mint_xfce": {
+            logo: "../../../assets/mint.png",
+            features: ["Old Hardware Support", "Excellent software support"],
+            learnMore: "https://linuxmint.com/download.php"
+        },
+        "linux_mint_cinnamon": {
             logo: "../../../assets/mint.png",
             features: ["Big community", "Excellent software support"],
             learnMore: "https://linuxmint.com/download.php"
-        });
-           rankingsModel.append({ 
-            rank: 4, 
-            distro: "Linux Mint", 
-            logo: "../../../assets/mint.png",
-            features: ["Big community", "Excellent software support"],
-            learnMore: "https://linuxmint.com/download.php"
-        });
-           rankingsModel.append({ 
-            rank: 5, 
-            distro: "Linux Mint", 
-            logo: "../../../assets/mint.png",
-            features: ["Big community", "Excellent software support"],
-            learnMore: "https://linuxmint.com/download.php"
-        });
+        },
+        "fedora": {
+            logo: "../../../assets/fedora.png",
+            features: ["Latest technologies", "Enterprise-backed"],
+            learnMore: "https://getfedora.org/"
+        },
+        "pop_os": {
+            logo: "../../../assets/popos.png",
+            features: ["Great for developers", "Nvidia support"],
+            learnMore: "https://pop.system76.com/"
+        },
+        "lubuntu": {
+            logo: "../../../assets/lubuntu.png",
+            features: ["Great for developers", "Nvidia support"],
+            learnMore: "https://pop.system76.com/"
+        },
+    }
+
+    Connections {
+        target: hardwareInfo
+        function onHardwareCheckCompleted(success, hardwareVector) {
+            if (success) {
+                resultPage.hardwareVector = hardwareVector;
+                recommenderModel.calculate_rankings(hardwareVector);
+            } else {
+                recommenderModel.calculate_rankings();
+            }
+        }
+    }
+
+    Connections {
+        target: recommenderModel
+        function onRankingsUpdated(rankings) {
+            rankingsModel.clear();
+            
+            for (var i = 0; i < rankings.length; i++) {
+                var distroId = rankings[i].distro.toLowerCase();
+                var metadata = distroInfo[distroId] || {
+                    logo: "../../../assets/distro.png",
+                    features: ["Linux distribution"],
+                    learnMore: ""
+                };
+                
+                rankingsModel.append({ 
+                    rank: i + 1,
+                    distro: rankings[i].distro.replace("_", " "),
+                    score: rankings[i].score,
+                    logo: metadata.logo,
+                    features: metadata.features,
+                    learnMore: metadata.learnMore
+                });
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        // rankings without hardware info
+        if (skipMode) {
+            recommenderModel.calculate_rankings();
+        }
         
+        // Hardcoded data if no rankings (will remove after complete testing)
+        if (rankingsModel.count === 0) {
+            // Sample data 
+            var sampleRankings = [
+                { distro: "kubuntu", score: 0.92 },
+                { distro: "lubuntu", score: 0.88 },
+                { distro: "linux_mint_xfce", score: 0.84 },
+                { distro: "pop_os", score: 0.80 },
+                { distro: "fedora", score: 0.75 }
+            ];
+            
+            for (var i = 0; i < sampleRankings.length; i++) {
+                var distroId = sampleRankings[i].distro.toLowerCase();
+                var metadata = distroInfo[distroId] || {
+                    logo: "../../../assets/distro.png",
+                    features: ["Linux distribution"],
+                    learnMore: ""
+                };
+                
+                rankingsModel.append({ 
+                    rank: i + 1,
+                    distro: sampleRankings[i].distro.replace("_", " "),
+                    score: sampleRankings[i].score,
+                    logo: metadata.logo,
+                    features: metadata.features,
+                    learnMore: metadata.learnMore
+                });
+            }
+        }
     }
 
     ColumnLayout {
@@ -87,6 +154,12 @@ Kirigami.Page {
             Layout.alignment: Qt.AlignLeading
         }
 
+        Controls.Label {
+            text: qsTr("Based on your answers, here are your top Linux recommendations:")
+            wrapMode: Text.Wrap
+            Layout.fillWidth: true
+        }
+
         Kirigami.ScrollablePage {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -107,7 +180,7 @@ Kirigami.Page {
                         spacing: Kirigami.Units.largeSpacing
                         
                         Image {
-                            source: model.logo
+                            source: model.logo || "../../../assets/distro.png"
                             Layout.preferredWidth: Kirigami.Units.gridUnit * 4
                             Layout.preferredHeight: Kirigami.Units.gridUnit * 4
                             fillMode: Image.PreserveAspectFit
@@ -144,7 +217,7 @@ Kirigami.Page {
                             Controls.Label {
                                 text: "Learn more: " + model.learnMore
                                 font.italic: true
-                                visible: model.learnMore !== ""
+                                visible: model.learnMore !== undefined && model.learnMore !== ""
                                 Layout.topMargin: Kirigami.Units.smallSpacing
                             }
                         }

@@ -115,38 +115,63 @@ Kirigami.Page {
         RowLayout {
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Kirigami.Units.gridUnit
-            spacing: Kirigami.Units.smallSpacing
-
+            spacing: Kirigami.Units.largeSpacing
+            
             Controls.Label {
                 text: qsTr("Curious about our products?")
+                Layout.alignment: Qt.AlignVCenter
             }
 
             Controls.Button {
+                text: qsTr("Find out more!")
+                flat: true
+                
                 contentItem: Controls.Label {
                     text: qsTr("Find out more!")
                     color: Kirigami.Theme.linkColor
                     font.underline: true
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
                 }
+                
                 onClicked: Qt.openUrlExternally("https://kde.org/products/")
             }
         }
 
-        Controls.Button {
-            text: qsTr("Go Back")
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: Kirigami.Units.gridUnit * 8
-            flat: true
+        // Thank you message section
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.margins: Kirigami.Units.gridUnit
+            Layout.preferredHeight: thankYouColumn.implicitHeight + Kirigami.Units.gridUnit * 2
+            color: Qt.rgba(Kirigami.Theme.backgroundColor.r, 
+                          Kirigami.Theme.backgroundColor.g, 
+                          Kirigami.Theme.backgroundColor.b, 0.8)
+            radius: Kirigami.Units.smallSpacing
+            border.width: 1
+            border.color: Kirigami.Theme.disabledTextColor
 
-            background: Rectangle {
-                color: "#96F948"
-                radius: height / 4
-            }
+            ColumnLayout {
+                id: thankYouColumn
+                anchors.centerIn: parent
+                width: parent.width - Kirigami.Units.gridUnit * 4
+                spacing: Kirigami.Units.largeSpacing
 
-            onClicked: {
-                pageStack.pop()
+                Kirigami.Heading {
+                    level: 3
+                    text: qsTr("Thank You for Using Win2Linux!")
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Controls.Label {
+                    text: qsTr("We hope our recommendations help you find the perfect Linux distribution.\n Enjoy your journey into the world of open-source software!")
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                }
             }
         }
 
+        // Spacer
         Item {
             Layout.fillHeight: true
         }
