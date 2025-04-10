@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "user_vector_order": {
+      "old_hardware": "1-5 (higher -> better support)",
+      "updates": { "Rolling": 0, "Point": 1 },
+      "UI_Look": { "Windows-like UI": 0, "Mac-like UI": 1 },
+      "ease_of_use": "1-5 (higher -> easier)",
+      "driver_support": "1-5 (higher -> better support for drivers)"
+    }
+  },
+
+  "user_vector": {
+    "questions": [
+      {
+        "parameter_name": "old_hardware",
+        "question_id": 2,
+        "option_id_to_score": {
+          "1": 5,
+          "2": 2,
+          "3": 1
+        }
+      },
+      {
+        "parameter_name": "updates",
+        "question_id": 3,
+        "option_id_to_score": {
+          "1": 0,
+          "2": 1
+        }
+      },
+      {
+        "parameter_name": "UI_Look",
+        "question_id": 4,
+        "option_id_to_score": {
+          "1": 0,
+          "2": 1
+        }
+      },
+      {
+        "parameter_name": "ease_of_use",
+        "question_id": 5,
+        "option_id_to_score": {
+          "1": 2,
+          "2": 3,
+          "3": 5
+        }
+      },
+      {
+        "parameter_name": "driver_support",
+        "question_id": 6,
+        "option_id_to_score": {
+          "1": 5,
+          "2": 2
+        }
+      }
+    ]
+  }
+}

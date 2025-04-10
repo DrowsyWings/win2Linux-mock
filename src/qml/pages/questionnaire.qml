@@ -4,6 +4,9 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 
 Kirigami.Page {
+    function allQuestionsAnswered() {
+    return questionnaireModel.currentIndex === questionnaireModel.questions.length - 1
+}
     id: questionnairePage
     title: qsTr("Question " + (questionnaireModel.currentIndex + 1) + "/" + questionnaireModel.questions.length)
     padding: 0
@@ -68,13 +71,18 @@ Kirigami.Page {
                         spacing: Kirigami.Units.smallSpacing
 
                         Repeater {
-                            model: Object.values(questionnaireModel.questions[questionnaireModel.currentIndex].options)
+                            model: Object.keys(questionnaireModel.questions[questionnaireModel.currentIndex].options)
                             delegate: Controls.RadioButton {
-                                text: modelData
+                                text:  questionnaireModel.questions[questionnaireModel.currentIndex].options[modelData]
                                 Controls.ButtonGroup.group: optionsGroup
                                 Layout.fillWidth: true
                                 KeyNavigation.tab: index === model.length - 1 ? prevButton : null
+                                checked: questionnaireModel.responses[String(questionnaireModel.questions[questionnaireModel.currentIndex].id)] === modelData
                                 focus: index === 0
+
+                                onClicked: {
+                                    questionnaireModel.setResponse(questionnaireModel.currentIndex,modelData)
+                                }
                             }
                         }
                     }
@@ -125,7 +133,7 @@ Kirigami.Page {
             Grid {
                 id: indicatorGrid
                 Layout.alignment: Qt.AlignVCenter
-                columns: 5  // Display 5 indicators per row
+                columns: questionnaireModel.questions.length / 2 
                 spacing: Kirigami.Units.smallSpacing
                 Layout.preferredHeight: Kirigami.Units.gridUnit * 5
                 KeyNavigation.tab: nextButton
@@ -156,7 +164,7 @@ Kirigami.Page {
             // Next Button
             Controls.Button {
                 id: nextButton
-                enabled: questionnaireModel.currentIndex < questionnaireModel.questions.length - 1
+                enabled: questionnaireModel.currentIndex < questionnaireModel.questions.length - 1 || allQuestionsAnswered()
                 Layout.preferredWidth: Kirigami.Units.gridUnit * 7
                 Layout.preferredHeight: Kirigami.Units.gridUnit * 3
                 Layout.alignment: Qt.AlignVCenter
@@ -178,13 +186,26 @@ Kirigami.Page {
                     color: "#000000"
                 }
 
-                onClicked: if (questionnaireModel.currentIndex < questionnaireModel.questions.length - 1) {
-                    questionnaireModel.setCurrentIndex(questionnaireModel.currentIndex + 1)
+                onClicked: {
+                    if (allQuestionsAnswered()) {
+                        // Navigate to the Result Page
+                        var resultPage = Qt.resolvedUrl("resultPage.qml")
+                        
+                        if (resultPage) {
+                            pageStack.pop()
+                            pageStack.push(resultPage)
+                        } else {
+                            console.error("Failed to resolve ResultPage.qml")
+                        }
+                    } else {
+                        questionnaireModel.setCurrentIndex(questionnaireModel.currentIndex + 1)
+                    }
                 }
             }
         }
 
-        // Back Button
+
+        // Back to main menu Button
         Controls.Button {
             id: backButton
             Layout.alignment: Qt.AlignHCenter
