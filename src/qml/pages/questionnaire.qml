@@ -189,7 +189,7 @@ Kirigami.Page {
                 onClicked: {
                     if (allQuestionsAnswered()) {
                         // Navigate to the Result Page
-                        var resultPage = Qt.resolvedUrl("resultPage.qml")
+                        var resultPage = Qt.resolvedUrl("HardwareInfo.qml")
                         
                         if (resultPage) {
                             pageStack.pop()

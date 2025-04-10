@@ -4,12 +4,15 @@ import json
 import logging
 import platform
 from typing import Dict, List, Optional, Any, Union
+from PySide6.QtCore import QObject, Signal, Slot
 
 # Logging setup
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-class HardwareInfo:
+class HardwareInfo(QObject):
+    dataUpdated = Signal(str)
     def __init__(self):
+        super().__init__()
         if not self._is_windows():
             raise SystemError("This script is designed for Windows only.")
 
@@ -26,6 +29,29 @@ class HardwareInfo:
             self._hardware_details["Manufacturer"] = item.Manufacturer
             self._hardware_details["System Architecture"] = item.SystemType.lower()
             self._hardware_details["Total RAM"] = self._convert_bytes_to_mb(psutil.virtual_memory().total)
+
+    def _get_storage_info(self) -> None:
+        """Collects Storage details."""
+        self._hardware_details["Storage"] = []
+        for disk in self._wmi_client.Win32_DiskDrive():
+            self._hardware_details["Storage"].append({
+                "Model": disk.Model,
+                "Size (GB)": round(int(disk.Size) / (1024**3), 2) if disk.Size else "Unknown",
+                "Interface": disk.InterfaceType,
+                "Type": "SSD" if "SSD" in disk.Model.upper() else "HDD"
+            })
+    
+    def _get_ram_info(self) -> None:
+        """Collects RAM details."""
+        self._hardware_details["RAM Details"] = []
+        for ram in self._wmi_client.Win32_PhysicalMemory():
+            self._hardware_details["RAM Details"].append({
+                "Capacity (GB)": round(int(ram.Capacity) / (1024**3), 2),
+                "Speed (MHz)": ram.Speed,
+                "Type": ram.MemoryType
+            })
+
+
 
     def _get_cpu_info(self) -> None:
         """Collects CPU details."""
@@ -60,11 +86,15 @@ class HardwareInfo:
         """Converts bytes to MB (2^20 bytes = 1 megabyte)."""
         return 0.0 if not size_in_bytes else round(size_in_bytes / (1024 * 1024), 2)
 
+    @Slot(result=None)
     def collect_hardware_info(self) -> None:
         """Runs all data collection methods."""
         self._get_system_info()
         self._get_cpu_info()
         self._get_gpu_info()
+        self._get_ram_info()
+        self._get_storage_info()
+        self.to_json()
 
     def display_info(self) -> None:
         """Displays hardware details."""
@@ -91,7 +121,8 @@ class HardwareInfo:
                 print(f"{key}: {value}")
         print("\n****************************\n")
 
-    def to_json(self, save_to_file: bool = False, filename: str = "hardware_info.json") -> str:
+    @Slot(result=str)
+    def to_json(self, save_to_file: bool = True, filename: str = "hardware_info.json") -> str:
         """
         Converts hardware details to JSON format.
 
@@ -112,16 +143,12 @@ class HardwareInfo:
                 with open(filename, 'w') as file:
                     file.write(json_data)
                 logging.info(f"Hardware info saved as '{filename}'!")
+
+                self.dataUpdated.emit(json_data)
             except IOError as e:
                 logging.error(f"Couldn't write to file '{filename}'. Exception: {e}")
 
-        return json_data
-
-if __name__ == "__main__":
-    try:
-        hardware_info = HardwareInfo()
-        hardware_info.collect_hardware_info()
-        hardware_info.display_info()
-        hardware_info.to_json(True)
-    except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+    @Slot(result=str)
+    def get_json_data(self) -> str:
+        """Returns hardware data as JSON string"""
+        return json.dumps(self._hardware_details, indent=4) if self._hardware_details else "{}"

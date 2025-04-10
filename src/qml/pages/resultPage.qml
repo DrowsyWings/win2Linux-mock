@@ -6,18 +6,38 @@ import org.kde.kirigami as Kirigami
 Kirigami.Page {
     id: resultPage
     title: qsTr("Recommended Linux Distributions")
-    
-    property var rankingsList: []
-    
+
+    property var hardwareVector: []
+    ListModel {
+        id: rankingsModel
+    }
+
     Connections {
-        target: recommenderModel
-        function onRankingsChanged(rankings) {
-            rankingsList = rankings;
+        target: hardwareInfo
+        function onHardwareCheckCompleted(success, hardwareVector) {
+            if (success) {
+                resultPage.hardwareVector = hardwareVector;
+                recommenderModel.calculate_rankings(hardwareVector);
+            } else {
+                recommenderModel.calculate_rankings();
+            }
         }
     }
-    
+
+    Connections {
+        target: recommenderModel
+        function onRankingsUpdated(rankings) {
+            rankingsModel.clear();
+            for (var i = 0; i < rankings.length; i++) {
+                rankingsModel.append(rankings[i]);
+            }
+        }
+    }
+
     Component.onCompleted: {
-        recommenderModel.calculate_rankings();
+        if (skipMode){
+            recommenderModel.calculate_rankings();
+        }
     }
 
     ColumnLayout {
@@ -41,7 +61,7 @@ Kirigami.Page {
             id: recommendationsList
             Layout.fillWidth: true
             Layout.fillHeight: true
-            model: rankingsList.length > 0 ? rankingsList : recommenderModel.get_rankings()
+            model: rankingsModel
             
             delegate: Item {
                 width: parent.width
@@ -51,16 +71,13 @@ Kirigami.Page {
                     anchors.fill: parent
 
                     Controls.Label {
-                        text: modelData.distro.replace("_", " ")
+                        text: model.distro.replace("_", " ")
                         Layout.fillWidth: true
                         font.bold: true
                     }
 
                     Controls.Label {
-                        text: {
-                            var scoreNum = Number(modelData.score);
-                            return isNaN(scoreNum) ? "N/A" : scoreNum.toFixed(2) + " points";
-                        }
+                        text: model.score !== undefined ? model.score.toFixed(2) + " points" : "N/A"
                         Layout.rightMargin: Kirigami.Units.gridUnit
                     }
                 }
@@ -70,15 +87,14 @@ Kirigami.Page {
         Controls.Button {
             text: qsTr("Back to Main Menu")
             Layout.alignment: Qt.AlignHCenter
-            onClicked:{
-                var url = Qt.resolvedUrl("welcomePage.qml")
-                if(url){
-                    pageStack.pop()
-                    pageStack.push(url)
+            onClicked: {
+                var url = Qt.resolvedUrl("welcomePage.qml");
+                if (url) {
+                    pageStack.pop();
+                    pageStack.push(url);
                 } else {
-                    console.error("Failed to resolve URL")
+                    console.error("Failed to resolve URL");
                 }
-                
             }
         }
     }
