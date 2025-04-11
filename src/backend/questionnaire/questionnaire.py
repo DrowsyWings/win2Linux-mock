@@ -1,6 +1,13 @@
 import json
 from pathlib import Path
 from PySide6.QtCore import QObject, Property, Signal, Slot
+import sys
+import os
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 class QuestionnaireModel(QObject):
     questionsChanged = Signal()
@@ -16,19 +23,19 @@ class QuestionnaireModel(QObject):
         self.load_responses()
 
     def load_questions(self):
-        json_path = Path(__file__).parent / "questionnaire.json"
+        json_path = resource_path("backend/questionnaire/questionnaire.json")
         with open(json_path, 'r') as f:
             data = json.load(f)
             self._questions = data["questions"]
 
     def load_responses(self):
-        response_path = Path(__file__).parent / "responses.json"
-        if response_path.exists():
+        response_path = resource_path("backend/questionnaire/responses.json")
+        if os.path.exists(response_path):
             with open(response_path, 'r') as f:
                 self._responses = json.load(f)
 
     def save_responses(self):
-        response_path = Path(__file__).parent / "responses.json"
+        response_path = resource_path("backend/questionnaire/responses.json")
         with open(response_path, 'w') as f:
             json.dump(self._responses, f, indent=4)
 

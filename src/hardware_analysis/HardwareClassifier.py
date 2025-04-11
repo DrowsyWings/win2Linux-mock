@@ -2,21 +2,27 @@ import json
 import logging
 import re
 import os
+import sys
 from typing import Dict, Any, List
 from PySide6.QtCore import QObject, Signal, Slot
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 class HardwareClassifier(QObject):
     hardwareClassified = Signal(list)
 
     def __init__(self):
         super().__init__()
-        self.hardware_data: Dict[str, Any] = {}  # Initialize empty, load when needed
+        self.hardware_data: Dict[str, Any] = {}
 
     def _load_hardware_data(self):
-        """Loads hardware data from hardware_info.json if it exists."""
-        if os.path.exists("hardware_info.json"):
+        hardware_path = resource_path("hardware_info.json")
+        if os.path.exists(hardware_path):
             try:
-                with open("hardware_info.json", "r") as file:
+                with open(hardware_path, "r") as file:
                     self.hardware_data = json.load(file)
                     logging.info("Hardware data successfully loaded.")
             except (json.JSONDecodeError, FileNotFoundError) as e:

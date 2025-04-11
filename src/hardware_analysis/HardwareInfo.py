@@ -1,5 +1,7 @@
 import psutil
 import wmi
+import sys
+import os
 import json
 import logging
 import platform
@@ -8,6 +10,11 @@ from PySide6.QtCore import QObject, Signal, Slot
 
 # Logging setup
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 class HardwareInfo(QObject):
     dataUpdated = Signal(str)
@@ -123,15 +130,6 @@ class HardwareInfo(QObject):
 
     @Slot(result=str)
     def to_json(self, save_to_file: bool = True, filename: str = "hardware_info.json") -> str:
-        """
-        Converts hardware details to JSON format.
-
-        Args:
-            save_to_file (bool): If True, saves the JSON output to a file in the working directory.
-            filename (str): Name of the output file, used iff save_to_file is True.
-        Returns:
-            str: Hardware details in a JSON string.
-        """
         if not self._hardware_details:
             logging.error("No hardware data available, JSON conversion failed.")
             return None
@@ -140,7 +138,8 @@ class HardwareInfo(QObject):
 
         if save_to_file:
             try:
-                with open(filename, 'w') as file:
+                output_path = resource_path(filename)
+                with open(output_path, 'w') as file:
                     file.write(json_data)
                 logging.info(f"Hardware info saved as '{filename}'!")
 
@@ -150,5 +149,4 @@ class HardwareInfo(QObject):
 
     @Slot(result=str)
     def get_json_data(self) -> str:
-        """Returns hardware data as JSON string"""
         return json.dumps(self._hardware_details, indent=4) if self._hardware_details else "{}"
